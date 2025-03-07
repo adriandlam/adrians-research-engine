@@ -41,6 +41,7 @@ import {
 	Bookmark,
 	ChevronDown,
 	FilterX,
+	Loader2,
 	Search,
 	Share,
 	SlidersHorizontal,
@@ -48,7 +49,7 @@ import {
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import useSWR from "swr";
 import { z } from "zod";
 
@@ -66,7 +67,8 @@ const categories = [
 	{ id: "eess", name: "Electrical Engineering and Systems Science" },
 ];
 
-export default function SearchPage() {
+// SearchContent component that uses useSearchParams
+function SearchContent() {
 	const [query, setQuery] = useState("");
 	const [showFilters, setShowFilters] = useState(true);
 	const [filters, setFilters] = useState({
@@ -111,17 +113,14 @@ export default function SearchPage() {
 
 		const params = new URLSearchParams();
 
-		// Add main query
 		params.set("query", query);
 
-		// Add pagination
 		if (page > 1) {
 			const newStart = (page - 1) * maxResults;
 			params.set("start", newStart.toString());
 		}
 		params.set("max_results", maxResults.toString());
 
-		// Add filters
 		if (filters.dateRange !== "all_time") {
 			params.set("date_range", filters.dateRange);
 		}
@@ -144,7 +143,6 @@ export default function SearchPage() {
 			categories: [],
 		});
 
-		// Apply the cleared filters immediately if we're already searching
 		if (currentQuery) {
 			const params = new URLSearchParams();
 			params.set("query", currentQuery);
@@ -199,16 +197,13 @@ export default function SearchPage() {
 	// Create pagination range with ellipsis
 	const getPaginationRange = () => {
 		if (totalPages <= 7) {
-			// Show all pages if 7 or fewer
 			return Array.from({ length: totalPages }, (_, i) => i + 1);
 		}
 
-		// Always show first, last, and pages around current
 		if (currentPage <= 3) {
-			// Near start: show 1,2,3,4,5,...,totalPages
 			return [1, 2, 3, 4, 5, "ellipsis", totalPages];
-		} else if (currentPage >= totalPages - 2) {
-			// Near end: show 1,...,totalPages-4,totalPages-3,totalPages-2,totalPages-1,totalPages
+		}
+		if (currentPage >= totalPages - 2) {
 			return [
 				1,
 				"ellipsis",
@@ -218,18 +213,16 @@ export default function SearchPage() {
 				totalPages - 1,
 				totalPages,
 			];
-		} else {
-			// Middle: show 1,...,currentPage-1,currentPage,currentPage+1,...,totalPages
-			return [
-				1,
-				"ellipsis",
-				currentPage - 1,
-				currentPage,
-				currentPage + 1,
-				"ellipsis",
-				totalPages,
-			];
 		}
+		return [
+			1,
+			"ellipsis",
+			currentPage - 1,
+			currentPage,
+			currentPage + 1,
+			"ellipsis",
+			totalPages,
+		];
 	};
 
 	// Navigate to a specific page
@@ -412,30 +405,6 @@ export default function SearchPage() {
 
 								<Separator className="my-3" />
 
-								{/* Date Range Filter */}
-								{/* <div className="mb-4">
-									<Label className="text-sm font-medium mb-2 block">
-										Date Range
-									</Label>
-									<Select
-										value={filters.dateRange}
-										onValueChange={(value) =>
-											setFilters({ ...filters, dateRange: value })
-										}
-									>
-										<SelectTrigger className="w-full">
-											<SelectValue placeholder="Select date range" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="all_time">All Time</SelectItem>
-											<SelectItem value="last_week">Last Week</SelectItem>
-											<SelectItem value="last_month">Last Month</SelectItem>
-											<SelectItem value="last_year">Last Year</SelectItem>
-											<SelectItem value="last_5_years">Last 5 Years</SelectItem>
-										</SelectContent>
-									</Select>
-								</div> */}
-
 								{/* Sort By Filter */}
 								<div className="mb-4">
 									<Label className="text-sm font-medium mb-2 block">
@@ -458,38 +427,16 @@ export default function SearchPage() {
 									</Select>
 								</div>
 
-								{/* Categories Filter */}
-								{/* <div className="mb-4">
-									<Collapsible defaultOpen>
-										<CollapsibleTrigger className="flex w-full justify-between items-center text-sm font-medium mb-2">
-											<span>Categories</span>
-											<ChevronDown className="h-4 w-4" />
-										</CollapsibleTrigger>
-										<CollapsibleContent className="space-y-2 mt-1">
-											{categories.map((category) => (
-												<div
-													key={category.id}
-													className="flex items-center space-x-2"
-												>
-													<Checkbox
-														id={`category-${category.id}`}
-														checked={filters.categories.includes(category.id)}
-														onCheckedChange={() => toggleCategory(category.id)}
-													/>
-													<Label
-														htmlFor={`category-${category.id}`}
-														className="text-sm font-normal cursor-pointer"
-													>
-														{category.name}
-													</Label>
-												</div>
-											))}
-										</CollapsibleContent>
-									</Collapsible>
-								</div> */}
-
-								<Button onClick={() => applySearch()} className="w-full">
-									Apply Filters
+								<Button
+									onClick={() => applySearch()}
+									className="w-full"
+									disabled={isLoading}
+								>
+									{isLoading ? (
+										<Loader2 className="animate-spin" />
+									) : (
+										"Apply Filters"
+									)}
 								</Button>
 							</div>
 						</div>
@@ -649,5 +596,22 @@ export default function SearchPage() {
 				)}
 			</div>
 		</main>
+	);
+}
+
+export default function SearchPage() {
+	return (
+		<Suspense
+			fallback={
+				<div className="flex justify-center items-center p-12">
+					<div className="text-center">
+						<Skeleton className="h-8 w-64 mx-auto mb-4" />
+						<Skeleton className="h-4 w-48 mx-auto" />
+					</div>
+				</div>
+			}
+		>
+			<SearchContent />
+		</Suspense>
 	);
 }
