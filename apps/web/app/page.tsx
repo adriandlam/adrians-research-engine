@@ -17,7 +17,6 @@ const exampleSearches = [
 ];
 
 const searchSchema = z.string().min(1);
-
 export default function Page() {
 	const [query, setQuery] = useState("");
 	const router = useRouter();
@@ -54,7 +53,7 @@ export default function Page() {
 					<Input
 						value={query}
 						onChange={(e) => setQuery(e.target.value)}
-						placeholder="Search articles, papers..."
+						placeholder="Ask a topic, or search for papers..."
 						className="border-none shadow-none focus-visible:ring-0"
 					/>
 					<Button size="icon" className="rounded-full" type="submit">

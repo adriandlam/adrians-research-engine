@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 	// Basic parameters
 	const query = request.nextUrl.searchParams.get("query") || "";
 	const start = request.nextUrl.searchParams.get("start") || "0";
-	const max_results = request.nextUrl.searchParams.get("max_results") || "20";
+	const max_results = request.nextUrl.searchParams.get("max_results") || "10";
 
 	// Filter parameters
 	// const dateRange = request.nextUrl.searchParams.get("date_range");

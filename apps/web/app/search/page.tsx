@@ -311,7 +311,7 @@ function SearchContent() {
 					<Input
 						value={query}
 						onChange={(e) => setQuery(e.target.value)}
-						placeholder="Search articles, papers..."
+						placeholder="Ask a topic, or search for papers..."
 						className="border-none shadow-none focus-visible:ring-0"
 					/>
 					<Button size="icon" className="rounded-full" type="submit">
@@ -455,17 +455,28 @@ function SearchContent() {
 									{data.data.map((paper) => (
 										<Card key={paper.id} className="overflow-hidden gap-1">
 											<CardHeader className="pb-2">
-												<CardTitle className="text-lg font-medium leading-tight">
-													<a
+												<CardTitle className="leading-tight">
+													<Link
 														href={paper.id}
 														target="_blank"
 														rel="noopener noreferrer"
-														className="hover:underline flex items-start"
+														className="hover:underline flex items-start text-lg font-medium"
 													>
 														<span className="mr-2">
 															{paper.title.replace(/\\n\s+/g, " ")}
 														</span>
-													</a>
+													</Link>
+													{normalizeAuthors(paper.author)
+														.slice(0, 1)
+														.map((author, idx) => (
+															<p
+																key={author.name}
+																className="text-muted-foreground text-sm font-normal mt-1"
+															>
+																{author.name}{" "}
+																{idx < paper.author.length - 1 && " et al."}
+															</p>
+														))}
 												</CardTitle>
 											</CardHeader>
 											<CardContent className="pb-2 text-sm">
@@ -474,39 +485,47 @@ function SearchContent() {
 													<span className="hidden sm:inline">•</span>
 													<span>arXiv: {getArxivId(paper.id)}</span>
 												</div>
-												<div className="mb-3">
-													<div className="flex flex-wrap gap-1 mb-2">
-														{normalizeAuthors(paper.author).map(
-															(author, idx) => (
-																<Badge
-																	key={idx}
-																	variant="outline"
-																	className="bg-background"
-																>
-																	{author.name}
-																</Badge>
-															),
-														)}
-													</div>
-												</div>
-												<p className="text-muted-foreground line-clamp-2">
+												<p className="line-clamp-2">
 													{paper.summary.replace(/\\n/g, " ")}
 												</p>
 											</CardContent>
 											<CardFooter className="pt-2 flex justify-between">
-												<Link
-													href={paper.id}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="text-primary text-sm hover:underline"
-												>
-													View on arXiv
-												</Link>
+												<div className="space-x-4">
+													<Button asChild variant="link" className="px-0">
+														<Link
+															href={paper.id.replace("/abs/", "/pdf/")}
+															target="_blank"
+															rel="noopener noreferrer"
+															className="text-primary text-sm"
+														>
+															View PDF
+														</Link>
+													</Button>
+
+													<Button asChild variant="link" className="px-0">
+														<Link
+															href={paper.id}
+															target="_blank"
+															rel="noopener noreferrer"
+															className="text-primary text-sm"
+														>
+															View on arXiv
+														</Link>
+													</Button>
+												</div>
 												<div className="space-x-1">
-													<Button size="icon" variant="ghost">
+													<Button
+														size="icon"
+														variant="ghost"
+														className="text-muted-foreground hover:bg-background rounded-md"
+													>
 														<Bookmark className="size-4" />
 													</Button>
-													<Button size="icon" variant="ghost">
+													<Button
+														size="icon"
+														variant="ghost"
+														className="text-muted-foreground hover:bg-background rounded-md"
+													>
 														<Share className="size-4" />
 													</Button>
 												</div>
