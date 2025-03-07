@@ -1,9 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
-    {"offset": {"line": 8, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}},
-    {"offset": {"line": 54, "column": 0}, "map": {"version":3,"sources":["file:///Users/adrianlam/Documents/Github/adrians-research-engine/apps/web/app/api/search/route.ts"],"sourcesContent":["export async function GET(request: Request) {\n\treturn new Response(\"Hello, world!\");\n}\n"],"names":[],"mappings":";;;AAAO,eAAe,IAAI,OAAgB;IACzC,OAAO,IAAI,SAAS;AACrB","debugId":null}},
-    {"offset": {"line": 60, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}
