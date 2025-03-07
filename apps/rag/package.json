@@ -1,37 +1,17 @@
 {
-	"name": "rag",
+	"name": "rag-api",
 	"version": "0.1.0",
-	"private": true,
-	"main": "src/index.js",
-	"scripts": {
-		"build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
-		"start": "node dist/index.js",
-		"watch-ts": "tsc --watch",
-		"watch-node": "nodemon",
-		"dev": "concurrently \"npm run watch-ts\" \"npm run watch-node\""
-	},
 	"type": "module",
-	"keywords": [],
-	"author": "",
-	"dependencies": {
-		"@types/express-prometheus-middleware": "^1.2.3",
-		"dotenv": "^16.4.7",
-		"express": "^4.21.2",
-		"express-prometheus-middleware": "^1.2.0",
-		"got-scraping": "^4.1.1",
-		"tsconfig-paths": "^4.2.0",
-		"zod": "^3.24.1"
+	"private": true,
+	"scripts": {
+	  "setup": "python3 -m venv .venv && source .venv/bin/activate && pip install --upgrade pip && pip install fastapi[standard] && pip install -r requirements.txt && docker pull qdrant/qdrant",
+	  "qdrant": "docker run -p 6333:6333 -p 6334:6334 -v \"$(pwd)/qdrant_storage:/qdrant/storage:z\" qdrant/qdrant",
+	  "api": "fastapi dev main.py",
+	  "dev": "concurrently \"pnpm run qdrant\" \"pnpm run api\"",
+	  "test": "pytest tests/"
 	},
 	"devDependencies": {
-		"@types/express": "^5.0.0",
-		"@types/node": "^22.13.4",
-		"@workspace/eslint-config": "workspace:^",
-		"@workspace/typescript-config": "workspace:*",
-		"concurrently": "^9.1.2",
-		"nodemon": "^3.1.9",
-		"ts-node": "^10.9.2",
-		"tsc-alias": "^1.8.10",
-		"tsx": "^4.19.2",
-		"typescript": "^5.7.3"
+	  "concurrently": "^9.1.2",
+	  "run-script-os": "^1.1.6"
 	}
-}
+  }
