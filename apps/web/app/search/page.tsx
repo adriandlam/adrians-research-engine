@@ -255,7 +255,7 @@ function SearchContent() {
 
 	// Skeleton components for loading state
 	const SkeletonResultCard = () => (
-		<Card className="overflow-hidden">
+		<Card className="overflow-hidden gap-1">
 			<CardHeader className="pb-2">
 				<Skeleton className="h-6 w-4/5" />
 			</CardHeader>
@@ -453,7 +453,7 @@ function SearchContent() {
 							) : data?.data && data.data.length > 0 ? (
 								<div className="flex flex-col gap-4 mb-8">
 									{data.data.map((paper) => (
-										<Card key={paper.id} className="overflow-hidden">
+										<Card key={paper.id} className="overflow-hidden gap-1">
 											<CardHeader className="pb-2">
 												<CardTitle className="text-lg font-medium leading-tight">
 													<a
