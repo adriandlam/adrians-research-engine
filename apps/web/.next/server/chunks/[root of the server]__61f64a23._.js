@@ -121,7 +121,8 @@ async function GET(request) {
     searchParams.set("max_results", max_results);
     // Add sort parameters if specified
     if (sortBy) {
-        let sortOrder, sortDirection;
+        let sortOrder;
+        let sortDirection;
         switch(sortBy){
             case "date_new":
                 sortOrder = "submittedDate";
@@ -131,13 +132,12 @@ async function GET(request) {
                 sortOrder = "submittedDate";
                 sortDirection = "ascending";
                 break;
-            case "relevance":
             default:
                 break;
         }
         if (sortOrder) {
             searchParams.set("sortBy", sortOrder);
-            searchParams.set("sortOrder", sortDirection);
+            searchParams.set("sortOrder", sortDirection || "descending");
         }
     }
     console.log(`Searching arXiv with query: ${searchQuery}`);
